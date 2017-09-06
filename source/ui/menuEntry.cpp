@@ -33,18 +33,18 @@ MenuEntry::~MenuEntry() {
 
 }
 
-void MenuEntry::draw(int t_x, int t_y) {
+void MenuEntry::draw(int t_x, int t_y, int t_opacity) {
 	if(this->m_empty) {
-		sf2d_draw_texture(this->m_entryEmptyTex, t_x + 4, t_y + 4);
+		sf2d_draw_texture_blend(this->m_entryEmptyTex, t_x, t_y, RGBA8(255, 255, 255, t_opacity));
 	} else {
 		if(this->m_hasIcon) {
-			sf2d_draw_texture_scale(&this->m_icon, t_x + 4, t_y + 4 + this->m_icon.height, 1, -1);
+			sf2d_draw_texture_scale_blend(&this->m_icon, t_x + 4, t_y + 4 + this->m_icon.height, 1, -1, RGBA8(255, 255, 255, t_opacity));
 		}
 
 		if(this->m_selected) {
-			sf2d_draw_texture(this->m_entryBorderSelectedTex, t_x, t_y);
+			sf2d_draw_texture_blend(this->m_entryBorderSelectedTex, t_x, t_y, RGBA8(255, 255, 255, t_opacity));
 		} else {
-			sf2d_draw_texture(this->m_entryBorderTex, t_x, t_y);
+			sf2d_draw_texture_blend(this->m_entryBorderTex, t_x, t_y, RGBA8(255, 255, 255, t_opacity));
 		}
 	}
 }

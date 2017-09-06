@@ -104,7 +104,8 @@ main.o: /home/stunthacks/dev/homebrew/3ds/homebrew_os/source/main.cpp \
  /home/stunthacks/dev/homebrew/3ds/homebrew_os/include/drawing.h \
  /home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/./style.h \
  /home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/./notification.h \
- /home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/./menuEntry.h
+ /home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/./menuPage.h \
+ /home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/././menuEntry.h
 
 /home/stunthacks/dev/homebrew/3ds/homebrew_os/include/includes.h:
 
@@ -316,4 +317,6 @@ main.o: /home/stunthacks/dev/homebrew/3ds/homebrew_os/source/main.cpp \
 
 /home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/./notification.h:
 
-/home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/./menuEntry.h:
+/home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/./menuPage.h:
+
+/home/stunthacks/dev/homebrew/3ds/homebrew_os/include/ui/././menuEntry.h:

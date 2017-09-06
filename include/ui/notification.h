@@ -6,12 +6,12 @@ private:
 	std::string m_text;
 	sftd_font *m_font;
 	bool m_shown;
-	unsigned int m_frameCounter, m_opacity;
+	unsigned int m_frameCounter, m_opacity, m_showTime;
 
 public:
 	Notification();
 	virtual ~Notification();
 
-	void show(std::string t_text);
+	void show(std::string t_text, unsigned int t_showTime = 60);
 	void update();
 };

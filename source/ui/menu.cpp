@@ -4,11 +4,18 @@ Menu::Menu() {
 	this->m_batteryIconState = 0;
 	this->m_frameCounter = 0;
 	this->m_selected = 0;
+	this->m_currentScreen = 0;
+	this->m_logoOpacity = 0;
+	this->m_logoScale = Style::LogoScale;
 	this->m_entryLaunched = false;
 	this->m_batteryIconShown = true;
 	this->m_menuEntryTouched = false;
 	this->m_settingsButtonTouched = false;
 	this->m_launchButtonTouched = false;
+	this->m_logoShown = true;
+	this->m_logoFade = true;
+
+	this->m_logo = sfil_load_PNG_file("romfs:/images/hb_logo.png", SF2D_PLACE_RAM);
 
 	this->m_buttonLaunchTex = sfil_load_PNG_file("romfs:/images/menu/button_launch.png", SF2D_PLACE_RAM);
 	this->m_buttonLaunchPushedTex = sfil_load_PNG_file("romfs:/images/menu/button_launch_pushed.png", SF2D_PLACE_RAM);
@@ -42,6 +49,8 @@ Menu::~Menu() {
 }
 
 void Menu::loadEntries(std::string t_path) {
+	this->m_entries.clear();
+	this->m_menuPages.clear();
 	menuScan(t_path.c_str());
 
 	menu_s* menu = menuGetCurrent();
@@ -51,13 +60,42 @@ void Menu::loadEntries(std::string t_path) {
 		pushEntry(me);
 	}
 
-	for(unsigned int i = 0; i < Style::Rows * Style::Columns; i++) {
-		if(i < this->m_entries.size()) {
-			MenuEntry entry(this->m_entries[i]);
-			this->m_menuEntries.push_back(entry);
-		} else {
-			MenuEntry entry(NULL);
-			this->m_menuEntries.push_back(entry);
+	unsigned int numEntries = this->m_entries.size(), numPages = 0, entriesPerPage = Style::Rows * Style::Columns;
+	numPages = (int) std::ceil(numEntries / entriesPerPage);
+
+	for(int i = 0; i <= numPages || i < Style::MinPages; i++) {
+		MenuPage page(i);
+
+		for(unsigned int j = entriesPerPage * i; j < entriesPerPage + entriesPerPage * i; j++) {
+			if(j < this->m_entries.size()) {
+				MenuEntry entry(this->m_entries[j]);
+				page.addEntry(entry);
+			} else {
+				MenuEntry entry(NULL);
+				page.addEntry(entry);
+			}
+		}
+
+		this->m_menuPages.push_back(page);
+	}
+}
+
+void Menu::navigateRight() {
+	if(this->m_currentScreen < this->m_menuPages.size() - 1) {
+		this->m_currentScreen++;
+
+		for(int i = 0; i < this->m_menuPages.size(); i++) {
+			this->m_menuPages[i].setScreen(this->m_menuPages[i].getScreen() - 1);
+		}
+	}
+}
+
+void Menu::navigateLeft() {
+	if(this->m_currentScreen > 0) {
+		this->m_currentScreen--;
+
+		for(int i = 0; i < this->m_menuPages.size(); i++) {
+			this->m_menuPages[i].setScreen(this->m_menuPages[i].getScreen() + 1);
 		}
 	}
 }
@@ -83,12 +121,68 @@ void Menu::update() {
 		this->m_launchButtonTouched = false;
 	}
 
+	if(!this->m_menuPages[0].isMoving()) {
+		if(hidKeysHeld() & KEY_R || hidKeysHeld() & KEY_ZR) {
+			navigateRight();
+		}
+
+		if(hidKeysHeld() & KEY_L || hidKeysHeld() & KEY_ZL) {
+			navigateLeft();
+		}
+	}
+
 	this->draw();
 }
 
 void Menu::draw() {
 	this->drawTop();
 	this->drawBottom();
+}
+
+void Menu::drawLogo() {
+	if(this->m_logoFade) {
+		if(this->m_logoShown) {
+			if(this->m_logoOpacity < 255) {
+				this->m_logoOpacity += Style::LogoFadeSpeed;
+				this->m_logoScale += Style::LogoScale / (255.f / Style::LogoFadeSpeed);
+
+				if(this->m_logoOpacity > 255) {
+					this->m_logoOpacity = 255;
+				}
+
+				if(this->m_logoScale > 1) {
+					this->m_logoScale = 1;
+				}
+			} else {
+				this->m_logoOpacity = 255;
+				this->m_logoScale = 1;
+				this->m_logoFade = false;
+			}
+		} else {
+			if(this->m_logoOpacity > 0) {
+				this->m_logoOpacity -= Style::LogoFadeSpeed;
+				this->m_logoScale -= Style::LogoScale / (255.f / Style::LogoFadeSpeed);
+
+				if(this->m_logoOpacity < 0) {
+					this->m_logoOpacity = 0;
+				}
+
+				if(this->m_logoScale < Style::LogoScale) {
+					this->m_logoScale = Style::LogoScale;
+				}
+			} else {
+				this->m_logoOpacity = 0;
+				this->m_logoScale = Style::LogoScale;
+				this->m_logoFade = false;
+			}
+		}
+	}
+
+	if(this->m_logoShown || this->m_logoOpacity > 0) {
+		int xPos = (WIDTH_TOP / 2) - ((this->m_logo->width * this->m_logoScale) / 2);
+		int yPos = (SCREEN_HEIGHT / 2) - ((this->m_logo->height * this->m_logoScale) / 2);
+		sf2d_draw_texture_scale_blend(this->m_logo, xPos, yPos, this->m_logoScale, this->m_logoScale, RGBA8(255, 255, 255, this->m_logoOpacity));
+	}
 }
 
 void Menu::drawTop() {
@@ -165,6 +259,10 @@ void Menu::drawTop() {
 
 	// header bar shadow (Hacky, lol)
 	sf2d_draw_rectangle_gradient(0, Style::HeaderBarHeight, WIDTH_TOP, 5, RGBA8(125, 125, 125, 50), RGBA8(125, 125, 125, 0), SF2D_TOP_TO_BOTTOM);
+
+	if(this->m_frameCounter > 10) {
+		drawLogo();
+	}
 }
 
 void Menu::drawBottom() {
@@ -184,16 +282,8 @@ void Menu::drawBottom() {
 	}
 
 	// draw menu entries
-	for(int i = 0, x = Style::IconsPosX, y = Style::IconsPosY; i < this->m_menuEntries.size(); i++) {
-
-		this->m_menuEntries[i].draw(x, y);
-
-		x += Style::EntryDimensions + Style::IconsMargin;
-
-		if((i + 1) % Style::Columns == 0) {
-			x = Style::IconsPosX;
-			y += Style::EntryDimensions + Style::IconsMargin;
-		}
+	for(unsigned int i = 0; i < this->m_menuPages.size(); i++) {
+		this->m_menuPages[i].update();
 	}
 
 	this->m_settingsText->draw();

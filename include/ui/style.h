@@ -15,10 +15,14 @@ namespace Style {
 	const int EntryDimensions = 56;
 	const int Rows = 3;
 	const int Columns = 4;
+	const int MinPages = 6;
+	const int PageMoveSpeed = 15;
 
 	// top screen
 	const int HeaderBarHeight = 20;
 	const int HeaderIconMargin = 5;
+	const int LogoFadeSpeed = 35;
+	const double LogoScale = 0.5f;
 
 	// colors
 	const unsigned int ClearColor = Colors::White;

@@ -3,19 +3,23 @@
 #include "drawing.h"
 #include "./style.h"
 #include "./notification.h"
+#include "./menuPage.h"
 #include "./menuEntry.h"
 
 class Menu {
 private:
 	std::vector<menuEntry_s*> m_entries;
-	std::vector<MenuEntry> m_menuEntries;
-	unsigned int m_selected, m_frameCounter, m_batteryIconState;
-	bool m_entryLaunched, m_batteryIconShown;
+	std::vector<MenuPage> m_menuPages;
+	unsigned int m_selected, m_frameCounter, m_batteryIconState, m_currentScreen;
+	int m_logoOpacity;
+	double m_logoScale;
+	bool m_entryLaunched, m_batteryIconShown, m_logoShown, m_logoFade;
 
 	sf2d_texture 	*m_buttonLaunchTex,
 								*m_buttonLaunchPushedTex,
 								*m_buttonSettingsTex,
-								*m_buttonSettingsPushedTex;
+								*m_buttonSettingsPushedTex,
+								*m_logo;
 
 	std::vector<sf2d_texture*> m_batteryIcons, m_wifiIcons;
 
@@ -32,6 +36,9 @@ public:
 
 	void pushEntry(menuEntry_s* t_me) { this->m_entries.push_back(t_me); };
 	void loadEntries(std::string t_path = "sdmc:/3ds");
+
+	void navigateLeft();
+	void navigateRight();
 
 	std::vector<menuEntry_s*> getEntries() { return this->m_entries; };
 	unsigned int getEntryAmount() { return this->m_entries.size(); };
@@ -81,6 +88,7 @@ public:
 						&& touch.py <= t_y + t_h;
 	}
 
+	void drawLogo();
 	void drawTop();
 	void drawBottom();
 	void draw();

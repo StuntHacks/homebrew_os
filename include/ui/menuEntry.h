@@ -14,5 +14,5 @@ public:
 	MenuEntry(menuEntry_s* t_me);
 	virtual ~MenuEntry();
 
-	void draw(int t_x, int t_y);
+	void draw(int t_x, int t_y, int t_opacity = 255);
 };

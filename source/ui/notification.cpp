@@ -7,17 +7,19 @@ Notification::Notification() {
 	this->m_shown = false;
 	this->m_frameCounter = 0;
 	this->m_opacity = 255;
+	this->m_showTime = 45;
 }
 
 Notification::~Notification() {
 
 }
 
-void Notification::show(std::string t_text) {
+void Notification::show(std::string t_text, unsigned int t_showTime) {
 	this->m_shown = true;
 	this->m_text = t_text;
 	this->m_frameCounter = 0;
 	this->m_opacity = 255;
+	this->m_showTime = t_showTime;
 }
 
 void Notification::update() {
@@ -27,7 +29,7 @@ void Notification::update() {
 		} else {
 			this->m_frameCounter++;
 
-			if(this->m_frameCounter > 30) {
+			if(this->m_frameCounter > this->m_showTime) {
 				if(this->m_opacity > 1) {
 					this->m_opacity -= 2;
 				} else {
