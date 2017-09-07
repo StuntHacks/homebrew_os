@@ -10,6 +10,7 @@ int main(int argc, char **argv)
 	Result ptmu_result = ptmuInit();
 	Result romfs_result = romfsInit();
 	launchInit();
+	sf2d_set_3D(true);
 
 	bool recovery = false, error = false, menuEntryLaunched = false;
 	menuEntry_s* launchedEntry;
@@ -35,14 +36,13 @@ int main(int argc, char **argv)
 		c.init(GFX_BOTTOM);
 		int recoveryLength = 9;
 
-		c.print("FTP-Adress: ", ConsoleColors::Yellow);
-		c.print("10.0.0.62\n", ConsoleColors::Cyan);
-		c.print("Port:       ", ConsoleColors::Yellow);
-		c.print("5000", ConsoleColors::Cyan);
+		// c.print("FTP-Adress: ", ConsoleColors::Yellow);
+		// c.print("10.0.0.62\n", ConsoleColors::Cyan);
+		// c.print("Port:       ", ConsoleColors::Yellow);
+		// c.print("5000", ConsoleColors::Cyan);
 		c.print("Recovery!", -1, true, true, (CONSOLE_ROWS_BOTTOM / 2) - (recoveryLength / 2), CONSOLE_LINES / 2);
 
 		if(error) {
-			printf("romfsInit: %08lX\n", romfs_result);
 			c.print("Error-Code: " + errorCode, ConsoleColors::Red, true, true, 0, CONSOLE_LINES);
 		}
 
@@ -77,9 +77,15 @@ int main(int argc, char **argv)
 		// Main loop
 		while (aptMainLoop())
 		{
+			if(menu.entryLaunched()) {
+				menuEntryLaunched = true;
+				launchedEntry = menu.getSelectedEntry();
+				break;
+			}
+
 			//Scan all the inputs. This should be done once for each frame
 			hidScanInput();
-			if (hidKeysDown() & KEY_B) break; // break in order to return to hbmenu
+			if (menu.getExited()) break; // break in order to return to hbmenu
 
 			menu.update();
 

@@ -13,5 +13,8 @@ public:
 	virtual ~Notification();
 
 	void show(std::string t_text, unsigned int t_showTime = 60);
+	void hide();
+	bool isShown() { return this->m_shown; };
+
 	void update();
 };

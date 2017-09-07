@@ -6,6 +6,7 @@ MenuPage::MenuPage(int t_screen) {
 	this->m_lastScreen = t_screen;
 	this->m_buttonMode = false;
 	this->m_moving = false;
+	this->m_selected = 0;
 
 	if(t_screen == 0) {
 		this->m_opacity = 255;
@@ -26,6 +27,12 @@ void MenuPage::addEntry(MenuEntry t_me) {
 
 void MenuPage::setSelected(int t_id) {
 	this->m_selected = t_id;
+
+	for(int i = 0; i < this->m_menuEntries.size(); i++) {
+		this->m_menuEntries[i].setSelected(false);
+	}
+
+	this->m_menuEntries[this->m_selected].setSelected(true);
 }
 
 void MenuPage::setScreen(int t_screen) {
@@ -34,6 +41,14 @@ void MenuPage::setScreen(int t_screen) {
 
 void MenuPage::setButtonMode(bool t_buttonMode) {
 	this->m_buttonMode = t_buttonMode;
+
+	if(t_buttonMode) {
+		this->m_menuEntries[this->m_selected].setSelected(true);
+	} else {
+		for(int i = 0; i < this->m_menuEntries.size(); i++) {
+			this->m_menuEntries[i].setSelected(false);
+		}
+	}
 }
 
 void MenuPage::draw() {

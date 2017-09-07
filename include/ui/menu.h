@@ -10,24 +10,25 @@ class Menu {
 private:
 	std::vector<menuEntry_s*> m_entries;
 	std::vector<MenuPage> m_menuPages;
-	unsigned int m_selected, m_frameCounter, m_batteryIconState, m_currentScreen;
-	int m_logoOpacity;
+	std::string m_dir;
+	unsigned int m_selected, m_selectedOnScreen, m_selectedRow, m_selectedCol, m_frameCounter, m_batteryIconState, m_currentScreen;
+	int m_logoOpacity, m_logoXPos, m_logoMoveDir;
 	double m_logoScale;
-	bool m_entryLaunched, m_batteryIconShown, m_logoShown, m_logoFade;
+	bool m_entryLaunched, m_batteryIconShown, m_logoShown, m_logoFade, m_buttonMode, m_hasEntries, m_inDir, m_exited;
 
-	sf2d_texture 	*m_buttonLaunchTex,
-								*m_buttonLaunchPushedTex,
+	sf2d_texture 	*m_buttonBackTex,
+								*m_buttonBackPushedTex,
 								*m_buttonSettingsTex,
 								*m_buttonSettingsPushedTex,
 								*m_logo;
 
 	std::vector<sf2d_texture*> m_batteryIcons, m_wifiIcons;
 
-	Text *m_settingsText, *m_launchText, *m_timeText;
+	Text *m_settingsText, *m_backText, *m_timeText;
 	Notification m_not;
 
 	// touch control
-	bool m_settingsButtonTouched, m_launchButtonTouched, m_menuEntryTouched;
+	bool m_settingsButtonTouched, m_backButtonTouched, m_menuEntryTouched;
 	unsigned int m_touchedEntry;
 
 public:
@@ -37,12 +38,14 @@ public:
 	void pushEntry(menuEntry_s* t_me) { this->m_entries.push_back(t_me); };
 	void loadEntries(std::string t_path = "sdmc:/3ds");
 
+	void launchEntry(int t_id);
+
 	void navigateLeft();
 	void navigateRight();
 
 	std::vector<menuEntry_s*> getEntries() { return this->m_entries; };
 	unsigned int getEntryAmount() { return this->m_entries.size(); };
-	unsigned int getSelected() { return this->m_selected; };
+	bool getExited() { return this->m_exited; };
 	menuEntry_s* getSelectedEntry() { return this->m_entries[this->m_selected]; };
 	bool entryLaunched() { return this->m_entryLaunched; };
 

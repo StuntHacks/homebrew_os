@@ -22,6 +22,10 @@ void Notification::show(std::string t_text, unsigned int t_showTime) {
 	this->m_showTime = t_showTime;
 }
 
+void Notification::hide() {
+	this->m_shown = false;
+}
+
 void Notification::update() {
 	if(this->m_shown) {
 		if(this->m_opacity <= 0) {

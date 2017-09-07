@@ -7,7 +7,7 @@ namespace Style {
 	const int ButtonHeight = 32;
 	const int ButtonWidth = 119;
 	const int SettingsTextPosX = 75;
-	const int LaunchTextPosX = 266;
+	const int BackTextPosX = 266;
 	const int ButtonTextPosY = SCREEN_HEIGHT - (Style::ButtonHeight / 2);
 	const int IconsPosX = 37;
 	const int IconsPosY = 18;
@@ -23,6 +23,7 @@ namespace Style {
 	const int HeaderIconMargin = 5;
 	const int LogoFadeSpeed = 35;
 	const double LogoScale = 0.5f;
+	const int LogoMoveOffset = 2;
 
 	// colors
 	const unsigned int ClearColor = Colors::White;
