@@ -21,6 +21,10 @@ namespace Style {
 	// top screen
 	const int HeaderBarHeight = 20;
 	const int HeaderIconMargin = 5;
+	const int AppIconOffset = IconsPosX;
+	const int AppTitleOffset = 10;
+	const double AppIconScale = 1;
+	const int AppTitleSize = 18;
 	const int LogoFadeSpeed = 35;
 	const double LogoScale = 0.5f;
 	const int LogoMoveOffset = 2;

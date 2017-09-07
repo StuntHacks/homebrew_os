@@ -24,7 +24,7 @@ private:
 
 	std::vector<sf2d_texture*> m_batteryIcons, m_wifiIcons;
 
-	Text *m_settingsText, *m_backText, *m_timeText;
+	Text *m_settingsText, *m_backText, *m_timeText, *m_appTitle;
 	Notification m_not;
 
 	// touch control

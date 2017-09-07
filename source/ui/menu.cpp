@@ -44,6 +44,7 @@ Menu::Menu() {
 	this->m_settingsText = new Text("romfs:/fonts/main.ttf", "Settings", Style::TextColor, 0, 0, Style::ButtonTextSize);
 	this->m_backText = new Text("romfs:/fonts/main.ttf", "Exit", Style::TextColor, 0, 0, Style::ButtonTextSize);
 	this->m_timeText = new Text("romfs:/fonts/main.ttf", "", Style::TextColorWhite, 0, 0, Style::TimeTextSize);
+	this->m_appTitle = new Text("romfs:/fonts/main.ttf", "", Style::TextColor, 0, 0, Style::AppTitleSize);
 
 	this->m_backText->setPos(Style::BackTextPosX - (this->m_backText->getBoundingBox().width / 2), Style::ButtonTextPosY - (this->m_backText->getBoundingBox().height / 1.7));
 	this->m_settingsText->setPos(Style::SettingsTextPosX - (this->m_settingsText->getBoundingBox().width / 2), Style::ButtonTextPosY - (this->m_settingsText->getBoundingBox().height / 1.7));
@@ -463,7 +464,6 @@ void Menu::drawTop() {
 		}
 	}
 
-
 	if(charging == 1) {
 		if(this->m_frameCounter % 60 == 0) {
 			if(this->m_batteryIconState == 4) {
@@ -479,6 +479,14 @@ void Menu::drawTop() {
 	std::string timeString = hourString + ":" + minString;
 	this->m_timeText->setText(timeString);
 	this->m_timeText->setPos((WIDTH_TOP / 2) - (this->m_timeText->getBoundingBox().width / 2), (Style::HeaderBarHeight / 2) - (this->m_timeText->getBoundingBox().height / 1.7));
+
+	if(this->m_buttonMode && this->m_selected < this->m_entries.size()) {
+		this->m_logoFade = true;
+		this->m_logoShown = false;
+	} else {
+		this->m_logoFade = true;
+		this->m_logoShown = true;
+	}
 
 	// Start the frame
 	sf2d_start_frame(GFX_TOP, GFX_LEFT);
@@ -501,6 +509,22 @@ void Menu::drawTop() {
 		drawLogo();
 	}
 
+	if(!this->m_logoShown && !this->m_logoFade && this->m_selected < this->m_entries.size()) {
+		if(this->m_entries[this->m_selected]->icon) {
+			sf2d_texture icon;
+			icon.tex = *this->m_entries[this->m_selected]->icon;
+			icon.tiled = 0;
+			icon.width = 48;
+			icon.height = 48;
+
+			sf2d_draw_texture_scale(&icon, Style::AppIconOffset - (5 * CONFIG_3D_SLIDERSTATE), ((SCREEN_HEIGHT - Style::HeaderBarHeight) / 2) - ((Style::EntryDimensions * Style::AppIconScale) / 2) + Style::EntryDimensions, Style::AppIconScale, -Style::AppIconScale);
+		}
+
+		this->m_appTitle->setText(this->m_entries[this->m_selected]->name);
+		this->m_appTitle->setPos(Style::AppIconOffset + Style::AppTitleOffset + (Style::EntryDimensions * Style::AppIconScale), ((SCREEN_HEIGHT - Style::HeaderBarHeight) / 2) - (this->m_appTitle->getBoundingBox().height / 2));
+		this->m_appTitle->draw();
+	}
+
 	// Start the frame
 	sf2d_start_frame(GFX_TOP, GFX_RIGHT);
 
@@ -518,6 +542,16 @@ void Menu::drawTop() {
 
 	if(this->m_frameCounter > 10) {
 		drawLogo();
+	}
+
+	if(!this->m_logoShown && !this->m_logoFade && this->m_selected < this->m_entries.size()) {
+		if(this->m_entries[this->m_selected]->icon) {
+			sf2d_texture icon;
+			icon.tex = *this->m_entries[this->m_selected]->icon;
+			sf2d_draw_texture_scale(&icon, Style::AppIconOffset + (5 * CONFIG_3D_SLIDERSTATE), ((SCREEN_HEIGHT - Style::HeaderBarHeight) / 2) - ((Style::EntryDimensions * Style::AppIconScale) / 2) + Style::EntryDimensions, Style::AppIconScale, -Style::AppIconScale);
+		}
+
+		this->m_appTitle->draw();
 	}
 }
 
